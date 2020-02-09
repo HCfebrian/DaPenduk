@@ -25,7 +25,11 @@ public class AdminViewModel extends AndroidViewModel {
 
 
     public boolean login(String username, String password) {
-        return username.equals("admin") && password.equals("admin");
+        List<Admin> admin = adminRepository.getAuthentication(username);
+        if(!admin.isEmpty()){
+            return admin.get(0).getPassword().equals(password);
+        }
+        return false;
     }
 
 }

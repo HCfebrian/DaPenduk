@@ -46,10 +46,12 @@ public class PendudukViewModel extends AndroidViewModel {
 
     public void delete(Penduduk penduduk){
         pendudukRepository.delete(penduduk);
+        updateData();
     }
 
     public void deleteAll(){
         pendudukRepository.deleteAllPenduduk();
+        updateData();
     }
 
     public LiveData<List<Penduduk>> getAllPenduduk(){
