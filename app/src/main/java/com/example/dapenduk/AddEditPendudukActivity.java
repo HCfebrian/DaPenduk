@@ -1,23 +1,22 @@
 package com.example.dapenduk;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
-import com.example.dapenduk.viewmodel.PendudukViewModel;
+import static com.example.dapenduk.LoginActivity.IS_LOGGED;
+import static com.example.dapenduk.LoginActivity.SHARED_PREFS;
 
 public class AddEditPendudukActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -27,36 +26,33 @@ public class AddEditPendudukActivity extends AppCompatActivity implements View.O
     public static final String EXTRA_ADDRESS = "com.example.dapenduk.EXTRA_ADDRESS";
     public static final String EXTRA_BORN_AT = "com.example.dapenduk.EXTRA_BORN_AT";
     public static final String EXTRA_PROFESSION = "com.example.dapenduk.EXTRA_PROFESSION";
+
     private EditText etName, etAddress, etBornAt, etProfession;
     private RadioGroup rgGender;
-    private PendudukViewModel pendudukViewModel;
+    private Button btnSubmit;
+    private RadioButton rbMale, rbFemale;
+    private CoordinatorLayout addPendudukLayout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_penduduk);
 
-
         etName = findViewById(R.id.et_name);
         etAddress = findViewById(R.id.et_address);
         etBornAt = findViewById(R.id.et_born_at);
         etProfession = findViewById(R.id.et_profession);
         rgGender = findViewById(R.id.rg_gender);
-        RadioButton rbMale = findViewById(R.id.rb_is_male);
-        RadioButton rbFemale = findViewById(R.id.rb_is_female);
-
-        pendudukViewModel =  new ViewModelProvider(this).get(PendudukViewModel.class);
-
-        Button btnSubmit = findViewById(R.id.btn_submit);
+        rbMale = findViewById(R.id.rb_is_male);
+        rbFemale = findViewById(R.id.rb_is_female);
+        btnSubmit = findViewById(R.id.btn_submit);
         Button btnCont = findViewById(R.id.btn_Count);
+        addPendudukLayout = findViewById(R.id.add_penduduk_layout);
+
         btnCont.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
 
-
         Intent intent = getIntent();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
         if(intent.hasExtra(EXTRA_ID)){
             setTitle("Edit Penduduk");
             etName.setText(intent.getStringExtra(EXTRA_NAME));
@@ -64,28 +60,19 @@ public class AddEditPendudukActivity extends AppCompatActivity implements View.O
             etBornAt.setText(intent.getStringExtra(EXTRA_BORN_AT));
             etProfession.setText(intent.getStringExtra(EXTRA_PROFESSION));
             if (intent.getBooleanExtra(EXTRA_IS_MALE,false)) {
-                rbFemale.isChecked();
+                rbMale.setChecked(true);
             } else {
-                rbMale.isChecked();
+                rbFemale.setChecked(true);
             }
         }else{
             setTitle("Add Penduduk");
         }
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        Log.d("cobabos", "onCreate: "+etName.getBackground().toString());
+        if(!isLogIn()){
+            disableEdit();
 
         }
-        return super.onOptionsItemSelected(item);
 
     }
 
@@ -102,7 +89,7 @@ public class AddEditPendudukActivity extends AppCompatActivity implements View.O
 
                 if(     name.trim().isEmpty() || address.trim().isEmpty() ||
                         bornAt.trim().isEmpty()|| profession.trim().isEmpty()){
-                    Toast.makeText(this, "Tolong isi kolom yang wajib diisi", Toast.LENGTH_SHORT).show();
+                    Utils.showSnackbar(addPendudukLayout,"Isi Data Yang Wajib Diisi");
                     return;
                 }
 
@@ -123,10 +110,66 @@ public class AddEditPendudukActivity extends AppCompatActivity implements View.O
                 break;
 
             case R.id.btn_Count:
-                pendudukViewModel.count();
                 break;
         }
 
+    }
+
+    private void disableEdit(){
+        etName.setInputType(InputType.TYPE_NULL);
+        etName.setTextIsSelectable(false);
+        etName.setBackground(null);
+
+        etBornAt.setInputType(InputType.TYPE_NULL);
+        etBornAt.setTextIsSelectable(false);
+        etBornAt.setBackground(null);
+
+        etAddress.setInputType(InputType.TYPE_NULL);
+        etAddress.setTextIsSelectable(false);
+        etAddress.setBackground(null);
+
+        etProfession.setInputType(InputType.TYPE_NULL);
+        etProfession.setTextIsSelectable(false);
+        etProfession.setBackground(null);
+
+        rbFemale.setClickable(false);
+        rbMale.setClickable(false);
+
+        btnSubmit.setClickable(false);
+        btnSubmit.setVisibility(View.INVISIBLE);
 
     }
+
+    private void enableEdit(){
+
+        //ToDo : enable this
+        etName.setInputType(InputType.TYPE_CLASS_TEXT);
+        etName.setTextIsSelectable(true);
+
+
+        etBornAt.setInputType(InputType.TYPE_NULL);
+        etBornAt.setTextIsSelectable(false);
+        etBornAt.setBackground(null);
+
+        etAddress.setInputType(InputType.TYPE_NULL);
+        etAddress.setTextIsSelectable(false);
+        etAddress.setBackground(null);
+
+        etProfession.setInputType(InputType.TYPE_NULL);
+        etProfession.setTextIsSelectable(false);
+        etProfession.setBackground(null);
+
+        rbFemale.setClickable(false);
+        rbMale.setClickable(false);
+
+        btnSubmit.setClickable(false);
+        btnSubmit.setVisibility(View.INVISIBLE);
+
+    }
+
+    private boolean isLogIn() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        return sharedPreferences.getBoolean(IS_LOGGED, false);
+    }
+
 }
