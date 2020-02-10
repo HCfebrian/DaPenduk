@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListPendudukAdapter extends ListAdapter<Penduduk,ListPendudukAdapter.ListPendudukHolder> implements Filterable {
-//    private List<Penduduk> pendudukList = new ArrayList<>();
     private List<Penduduk> pendudukListFull = new ArrayList<>();
     private OnItemClickListener listener;
 

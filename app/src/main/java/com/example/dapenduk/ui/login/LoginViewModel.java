@@ -5,24 +5,22 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.ViewModel;
 
 import com.example.dapenduk.data.Repo.AdminRepository;
 import com.example.dapenduk.data.model.Admin;
 
 import java.util.List;
 
-import javax.inject.Inject;
 
-
-public class LoginViewModel extends ViewModel {
-    @Inject AdminRepository adminRepository;
+public class LoginViewModel extends AndroidViewModel {
+    private AdminRepository adminRepository;
 
 
 
-    public LoginViewModel() {
+    public LoginViewModel(@NonNull Application application) {
+        super(application);
+        adminRepository = new AdminRepository(application);
     }
-
 
 
     public boolean validate(String username, String password) {

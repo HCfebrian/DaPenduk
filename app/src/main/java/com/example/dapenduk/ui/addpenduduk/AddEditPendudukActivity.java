@@ -1,4 +1,4 @@
-package com.example.dapenduk;
+package com.example.dapenduk.ui.addpenduduk;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,8 +15,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
-import static com.example.dapenduk.LoginActivity.IS_LOGGED;
-import static com.example.dapenduk.LoginActivity.SHARED_PREFS;
+import com.example.dapenduk.R;
+import com.example.dapenduk.utils.Utils;
+
+import static com.example.dapenduk.ui.login.LoginActivity.IS_LOGGED;
+import static com.example.dapenduk.ui.login.LoginActivity.SHARED_PREFS;
 
 public class AddEditPendudukActivity extends AppCompatActivity implements View.OnClickListener {
 

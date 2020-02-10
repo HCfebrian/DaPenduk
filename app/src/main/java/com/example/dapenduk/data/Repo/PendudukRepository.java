@@ -2,12 +2,11 @@ package com.example.dapenduk.data.Repo;
 
 import android.app.Application;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.dapenduk.data.DAO.DaoSessionApp;
+import com.example.dapenduk.DaoSessionApp;
 import com.example.dapenduk.data.model.DaoSession;
 import com.example.dapenduk.data.model.Penduduk;
 

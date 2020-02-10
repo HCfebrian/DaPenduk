@@ -1,4 +1,4 @@
-package com.example.dapenduk.viewmodel;
+package com.example.dapenduk.ui.daftarpenduduk;
 
 import android.app.Application;
 import android.util.Log;

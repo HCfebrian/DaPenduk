@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.dapenduk.ui.login.LoginActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override

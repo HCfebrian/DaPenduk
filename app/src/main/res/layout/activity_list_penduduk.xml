@@ -4,7 +4,7 @@
     android:id="@+id/list_penduduk"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ListPendudukActivity">
+    tools:context=".ui.daftarpenduduk.ListPendudukActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_penduduk"

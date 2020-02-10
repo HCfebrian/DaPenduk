@@ -1,9 +1,8 @@
-package com.example.dapenduk;
+package com.example.dapenduk.ui.daftarpenduduk;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,15 +19,17 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.dapenduk.ui.addpenduduk.AddEditPendudukActivity;
+import com.example.dapenduk.R;
 import com.example.dapenduk.data.model.Penduduk;
 import com.example.dapenduk.ui.adapter.ListPendudukAdapter;
-import com.example.dapenduk.viewmodel.PendudukViewModel;
+import com.example.dapenduk.utils.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-import static com.example.dapenduk.LoginActivity.IS_LOGGED;
-import static com.example.dapenduk.LoginActivity.SHARED_PREFS;
+import static com.example.dapenduk.ui.login.LoginActivity.IS_LOGGED;
+import static com.example.dapenduk.ui.login.LoginActivity.SHARED_PREFS;
 
 public class ListPendudukActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -68,7 +69,6 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
                     public void onChanged(List<Penduduk> penduduks) {
                         listPendudukAdapter.submitList(penduduks);
                         listPendudukAdapter.setPendudukListFull(pendudukViewModel.getAllPenduduk().getValue());
-                        Log.d("cobabos", "onstart: "+pendudukViewModel.getAllPenduduk().getValue());
 
                     }
                 });

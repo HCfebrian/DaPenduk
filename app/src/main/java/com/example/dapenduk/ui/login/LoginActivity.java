@@ -10,24 +10,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.dapenduk.ListPendudukActivity;
 import com.example.dapenduk.R;
-import com.example.dapenduk.Utils;
+import com.example.dapenduk.ui.daftarpenduduk.ListPendudukActivity;
+import com.example.dapenduk.utils.Utils;
 
-import dagger.android.support.DaggerAppCompatActivity;
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-public class LoginActivity extends DaggerAppCompatActivity implements View.OnClickListener {
-
-    private static final String TAG = "LoginActivity";
     private EditText etUsername, etPassword;
-    LoginViewModel loginViewModel;
+    private LoginViewModel loginViewModel;
     private CoordinatorLayout loginLayout;
     public static final String SHARED_PREFS = "com.example.dapenduk.sharedPrefs";
     public static final String IS_LOGGED = "com.example.dapenduk.isLogged";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,25 +45,6 @@ public class LoginActivity extends DaggerAppCompatActivity implements View.OnCli
         if (isLogIn()) {
             toListActivity();
         }
-
-//        if (adminRepository!=null){
-//            //todo hapus ini
-//            Log.d(TAG, "cobabos gak null admin repo");
-//        }
-//        else{
-//            Log.d(TAG, "cobabos yah null admin repo");
-//        }
-
-
-
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-
 
     }
 

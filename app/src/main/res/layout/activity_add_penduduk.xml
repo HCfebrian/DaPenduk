@@ -4,7 +4,7 @@
     android:id="@+id/add_penduduk_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddEditPendudukActivity"
+    tools:context=".ui.addpenduduk.AddEditPendudukActivity"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.LinearLayoutCompat
