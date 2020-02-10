@@ -9,6 +9,8 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dapenduk.R;
@@ -17,10 +19,35 @@ import com.example.dapenduk.data.model.Penduduk;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListPendudukAdapter extends RecyclerView.Adapter<ListPendudukAdapter.ListPendudukHolder> implements Filterable {
-    private List<Penduduk> pendudukList = new ArrayList<>();
-    private List<Penduduk> pendudukListFull;
+public class ListPendudukAdapter extends ListAdapter<Penduduk,ListPendudukAdapter.ListPendudukHolder> implements Filterable {
+//    private List<Penduduk> pendudukList = new ArrayList<>();
+    private List<Penduduk> pendudukListFull = new ArrayList<>();
     private OnItemClickListener listener;
+
+
+    public ListPendudukAdapter() {
+        super(DIFF_CALLBACK);
+    }
+
+    public void setPendudukListFull(List<Penduduk> pendudukListFull){
+        this.pendudukListFull = pendudukListFull;
+    }
+    private static final DiffUtil.ItemCallback<Penduduk>DIFF_CALLBACK = new DiffUtil.ItemCallback<Penduduk>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull Penduduk oldItem, @NonNull Penduduk newItem) {
+            return oldItem.getId().equals(newItem.getId());
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Penduduk oldItem, @NonNull Penduduk newItem) {
+            return oldItem.getId().equals(newItem.getId())&&
+                    oldItem.getName().equals(newItem.getName())&&
+                    oldItem.getAddress().equals(newItem.getBornAt())&&
+                    oldItem.getBornAt().equals(newItem.getBornAt())&&
+                    oldItem.getIsMale()== newItem.getIsMale();
+
+        }
+    };
 
     @NonNull
     @Override
@@ -32,25 +59,16 @@ public class ListPendudukAdapter extends RecyclerView.Adapter<ListPendudukAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ListPendudukHolder holder, int position) {
-        Penduduk currentPenduduk = pendudukList.get(position);
+        Penduduk currentPenduduk = getItem(position);
         holder.tvTitle.setText(currentPenduduk.getName());
         holder.tvDescription.setText(currentPenduduk.getAddress());
         holder.tvPriority.setText(currentPenduduk.getProfession());
     }
 
-    @Override
-    public int getItemCount() {
-        return pendudukList.size();
-    }
 
-    public void setPendudukList(List<Penduduk> pendudukList) {
-        this.pendudukList = pendudukList;
-        this.pendudukListFull = new ArrayList<>(pendudukList);
-        notifyDataSetChanged();
-    }
 
-    public Penduduk getpendudukPos(int pos) {
-        return pendudukList.get(pos);
+    public Penduduk getPendudukPos(int pos) {
+        return getItem(pos);
     }
 
     @Override
@@ -68,6 +86,7 @@ public class ListPendudukAdapter extends RecyclerView.Adapter<ListPendudukAdapte
             }else{
                 String filterPattern =  constraint.toString().toLowerCase().trim();
                 for(Penduduk penduduk : pendudukListFull){
+                    Log.d("cobabos", "performFiltering: "+pendudukListFull);
                     if( penduduk.getName().toLowerCase().contains(filterPattern)||
                         penduduk.getAddress().toLowerCase().contains(filterPattern)){
                         filteredPenduduk.add(penduduk);
@@ -81,8 +100,10 @@ public class ListPendudukAdapter extends RecyclerView.Adapter<ListPendudukAdapte
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            pendudukList.clear();
-            pendudukList.addAll((List) results.values);
+//            submitList(null);
+            submitList((List<Penduduk>)results.values);
+            Log.d("cobabos", "publishResults: "+ results.values);
+//            pendudukList.addAll((List) results.values);
             notifyDataSetChanged();
         }
     };
@@ -105,7 +126,7 @@ public class ListPendudukAdapter extends RecyclerView.Adapter<ListPendudukAdapte
                 public void onClick(View v) {
                     int pos = getAdapterPosition();
                     if (listener != null && pos != RecyclerView.NO_POSITION) {
-                        listener.onItemClick(pendudukList.get(pos));
+                        listener.onItemClick(getItem(pos));
                     }
                 }
             });

@@ -3,6 +3,7 @@ package com.example.dapenduk;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,20 +44,17 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_penduduk);
 
+        pendudukViewModel = new ViewModelProvider(this).get(PendudukViewModel.class);
+        listPendudukAdapter = new ListPendudukAdapter();
+
         coordinatorLayout = findViewById(R.id.list_penduduk);
         rvListPenduduk = findViewById(R.id.rv_penduduk);
         FloatingActionButton floatingActionButton = findViewById(R.id.fab_add_penduduk);
         FloatingActionButton fabcount = findViewById(R.id.fab_count_list);
 
-
-        pendudukViewModel = new ViewModelProvider(this).get(PendudukViewModel.class);
-        listPendudukAdapter = new ListPendudukAdapter();
-
-
         rvListPenduduk.setLayoutManager(new LinearLayoutManager(this));
         rvListPenduduk.setHasFixedSize(true);
         rvListPenduduk.setAdapter(listPendudukAdapter);
-
 
         floatingActionButton.setOnClickListener(this);
         fabcount.setOnClickListener(this);
@@ -64,12 +62,14 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
             enableSwipe();
         }
 
-
         pendudukViewModel.getAllPenduduk().observe(this,
                 new Observer<List<Penduduk>>() {
                     @Override
                     public void onChanged(List<Penduduk> penduduks) {
-                        listPendudukAdapter.setPendudukList(penduduks);
+                        listPendudukAdapter.submitList(penduduks);
+                        listPendudukAdapter.setPendudukListFull(pendudukViewModel.getAllPenduduk().getValue());
+                        Log.d("cobabos", "onstart: "+pendudukViewModel.getAllPenduduk().getValue());
+
                     }
                 });
 
@@ -188,7 +188,7 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                pendudukViewModel.delete(listPendudukAdapter.getpendudukPos(viewHolder.getAdapterPosition()));
+                pendudukViewModel.delete(listPendudukAdapter.getPendudukPos(viewHolder.getAdapterPosition()));
                 pendudukViewModel.updateData();
             }
         }).attachToRecyclerView(rvListPenduduk);
