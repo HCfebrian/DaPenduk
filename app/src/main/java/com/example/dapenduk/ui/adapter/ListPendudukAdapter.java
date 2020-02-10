@@ -1,5 +1,6 @@
 package com.example.dapenduk.ui.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +45,7 @@ public class ListPendudukAdapter extends RecyclerView.Adapter<ListPendudukAdapte
 
     public void setPendudukList(List<Penduduk> pendudukList) {
         this.pendudukList = pendudukList;
-        this.pendudukListFull = new ArrayList<>(this.pendudukList);
+        this.pendudukListFull = new ArrayList<>(pendudukList);
         notifyDataSetChanged();
     }
 
@@ -63,10 +64,12 @@ public class ListPendudukAdapter extends RecyclerView.Adapter<ListPendudukAdapte
             List<Penduduk> filteredPenduduk = new ArrayList<>();
             if(constraint == null || constraint.length() == 0 ){
                 filteredPenduduk.addAll(pendudukListFull);
+                Log.d("cobabos", "performFiltering: ");
             }else{
                 String filterPattern =  constraint.toString().toLowerCase().trim();
                 for(Penduduk penduduk : pendudukListFull){
-                    if(penduduk.getName().toLowerCase().contains(filterPattern)){
+                    if( penduduk.getName().toLowerCase().contains(filterPattern)||
+                        penduduk.getAddress().toLowerCase().contains(filterPattern)){
                         filteredPenduduk.add(penduduk);
                     }
                 }
@@ -79,7 +82,7 @@ public class ListPendudukAdapter extends RecyclerView.Adapter<ListPendudukAdapte
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             pendudukList.clear();
-            pendudukListFull.addAll((List) results.values);
+            pendudukList.addAll((List) results.values);
             notifyDataSetChanged();
         }
     };

@@ -2,7 +2,6 @@ package com.example.dapenduk;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,7 +27,7 @@ public class AddEditPendudukActivity extends AppCompatActivity implements View.O
     public static final String EXTRA_ADDRESS = "com.example.dapenduk.EXTRA_ADDRESS";
     public static final String EXTRA_BORN_AT = "com.example.dapenduk.EXTRA_BORN_AT";
     public static final String EXTRA_PROFESSION = "com.example.dapenduk.EXTRA_PROFESSION";
-    private EditText etName, etAdress, etBornAt,etProffesion;
+    private EditText etName, etAddress, etBornAt, etProfession;
     private RadioGroup rgGender;
     private PendudukViewModel pendudukViewModel;
 
@@ -39,9 +38,9 @@ public class AddEditPendudukActivity extends AppCompatActivity implements View.O
 
 
         etName = findViewById(R.id.et_name);
-        etAdress = findViewById(R.id.et_address);
+        etAddress = findViewById(R.id.et_address);
         etBornAt = findViewById(R.id.et_born_at);
-        etProffesion = findViewById(R.id.et_profession);
+        etProfession = findViewById(R.id.et_profession);
         rgGender = findViewById(R.id.rg_gender);
         RadioButton rbMale = findViewById(R.id.rb_is_male);
         RadioButton rbFemale = findViewById(R.id.rb_is_female);
@@ -53,15 +52,17 @@ public class AddEditPendudukActivity extends AppCompatActivity implements View.O
         btnCont.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
 
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
-        Intent intent = getIntent();
 
+        Intent intent = getIntent();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
         if(intent.hasExtra(EXTRA_ID)){
             setTitle("Edit Penduduk");
             etName.setText(intent.getStringExtra(EXTRA_NAME));
-            etAdress.setText(intent.getStringExtra(EXTRA_ADDRESS));
+            etAddress.setText(intent.getStringExtra(EXTRA_ADDRESS));
             etBornAt.setText(intent.getStringExtra(EXTRA_BORN_AT));
-            etProffesion.setText(intent.getStringExtra(EXTRA_PROFESSION));
+            etProfession.setText(intent.getStringExtra(EXTRA_PROFESSION));
             if (intent.getBooleanExtra(EXTRA_IS_MALE,false)) {
                 rbFemale.isChecked();
             } else {
@@ -76,7 +77,6 @@ public class AddEditPendudukActivity extends AppCompatActivity implements View.O
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.list_menu,menu);
         return true;
     }
 
@@ -94,9 +94,9 @@ public class AddEditPendudukActivity extends AppCompatActivity implements View.O
         switch (v.getId()){
             case R.id.btn_submit:
                 String name = etName.getText().toString();
-                String address = etAdress.getText().toString();
+                String address = etAddress.getText().toString();
                 String bornAt = etBornAt.getText().toString();
-                String profession = etProffesion.getText().toString();
+                String profession = etProfession.getText().toString();
                 int selectedId = rgGender.getCheckedRadioButtonId();
                 boolean isMale = (selectedId == R.id.rb_is_male);
 
@@ -108,9 +108,9 @@ public class AddEditPendudukActivity extends AppCompatActivity implements View.O
 
                 Intent data = new Intent();
                 data.putExtra(EXTRA_NAME,name);
-                data.putExtra(EXTRA_ADDRESS,name);
-                data.putExtra(EXTRA_BORN_AT,name);
-                data.putExtra(EXTRA_PROFESSION,name);
+                data.putExtra(EXTRA_ADDRESS,address);
+                data.putExtra(EXTRA_BORN_AT,bornAt);
+                data.putExtra(EXTRA_PROFESSION,profession);
                 data.putExtra(EXTRA_IS_MALE,isMale);
 
                 long id = getIntent().getLongExtra(EXTRA_ID,-1);

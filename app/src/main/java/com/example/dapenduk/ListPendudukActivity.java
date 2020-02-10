@@ -1,6 +1,7 @@
 package com.example.dapenduk;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -25,11 +27,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-public class ListPendudukActivity extends AppCompatActivity implements View.OnClickListener {
+import static com.example.dapenduk.LoginActivity.IS_LOGGED;
+import static com.example.dapenduk.LoginActivity.SHARED_PREFS;
 
+public class ListPendudukActivity extends AppCompatActivity implements View.OnClickListener {
 
     private PendudukViewModel pendudukViewModel;
     private ListPendudukAdapter listPendudukAdapter;
+    private RecyclerView rvListPenduduk;
     private static final String TAG = "updatebos";
     public static final int ADD_NOTE_REQUEST = 1;
     public static final int EDIT_NOTE_REQUEST = 2;
@@ -39,7 +44,7 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_penduduk);
 
-        RecyclerView rvListPenduduk = findViewById(R.id.rv_penduduk);
+         rvListPenduduk = findViewById(R.id.rv_penduduk);
         FloatingActionButton floatingActionButton = findViewById(R.id.fab_add_penduduk);
         FloatingActionButton fabcount = findViewById(R.id.fab_count_list);
 
@@ -56,40 +61,31 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
             public void onChanged(List<Penduduk> penduduks) {
                 listPendudukAdapter.setPendudukList(penduduks);
                 Log.d(TAG, "onChanged: ");
-//                Toast.makeText(ListPendudukActivity.this, "Onchange", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ListPendudukActivity.this, "Onchange", Toast.LENGTH_SHORT).show();
             }
         });
 
         floatingActionButton.setOnClickListener(this);
         fabcount.setOnClickListener(this);
 
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                pendudukViewModel.delete(listPendudukAdapter.getpendudukPos(viewHolder.getAdapterPosition()));
-                Toast.makeText(ListPendudukActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
-                pendudukViewModel.updateData();
-            }
-        }).attachToRecyclerView(rvListPenduduk);
-
-        listPendudukAdapter.setOnItemClickListener(new ListPendudukAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Penduduk penduduk) {
-                Intent intent = new Intent(ListPendudukActivity.this, AddEditPendudukActivity.class);
-                intent.putExtra(AddEditPendudukActivity.EXTRA_NAME, penduduk.getName());
-                intent.putExtra(AddEditPendudukActivity.EXTRA_ID, penduduk.getId());
-                intent.putExtra(AddEditPendudukActivity.EXTRA_ADDRESS, penduduk.getAddress());
-                intent.putExtra(AddEditPendudukActivity.EXTRA_BORN_AT, penduduk.getBornAt());
-                intent.putExtra(AddEditPendudukActivity.EXTRA_IS_MALE, penduduk.getIsMale());
-                intent.putExtra(AddEditPendudukActivity.EXTRA_PROFESSION, penduduk.getProfession());
-                startActivityForResult(intent, EDIT_NOTE_REQUEST);
-            }
+        if(isLogIn()) {
+            enableSwipe();
         }
+
+        listPendudukAdapter.setOnItemClickListener(
+                new ListPendudukAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Penduduk penduduk) {
+                        Intent intent = new Intent(ListPendudukActivity.this, AddEditPendudukActivity.class);
+                        intent.putExtra(AddEditPendudukActivity.EXTRA_NAME, penduduk.getName());
+                        intent.putExtra(AddEditPendudukActivity.EXTRA_ID, penduduk.getId());
+                        intent.putExtra(AddEditPendudukActivity.EXTRA_ADDRESS, penduduk.getAddress());
+                        intent.putExtra(AddEditPendudukActivity.EXTRA_BORN_AT, penduduk.getBornAt());
+                        intent.putExtra(AddEditPendudukActivity.EXTRA_IS_MALE, penduduk.getIsMale());
+                        intent.putExtra(AddEditPendudukActivity.EXTRA_PROFESSION, penduduk.getProfession());
+                        startActivityForResult(intent, EDIT_NOTE_REQUEST);
+                    }
+                }
         );
 
     }
@@ -119,7 +115,7 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
 
             pendudukViewModel.insert(penduduk);
             Toast.makeText(this, "Data Penduduk Saved", Toast.LENGTH_SHORT).show();
-        } else if (requestCode == EDIT_NOTE_REQUEST && resultCode == RESULT_OK && data!= null) {
+        } else if (requestCode == EDIT_NOTE_REQUEST && resultCode == RESULT_OK && data != null) {
             long id = data.getLongExtra(AddEditPendudukActivity.EXTRA_ID, -1);
 
             if (id == -1) {
@@ -143,6 +139,22 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.list_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setQueryHint("Search Name or Address");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                listPendudukAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
         return true;
     }
 
@@ -166,6 +178,27 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
             case R.id.fab_count_list:
                 pendudukViewModel.count();
         }
+    }
+
+    private boolean isLogIn() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        return sharedPreferences.getBoolean(IS_LOGGED, false);
+    }
+
+    private void enableSwipe(){
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                pendudukViewModel.delete(listPendudukAdapter.getpendudukPos(viewHolder.getAdapterPosition()));
+                Toast.makeText(ListPendudukActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
+                pendudukViewModel.updateData();
+            }
+        }).attachToRecyclerView(rvListPenduduk);
     }
 }
 
