@@ -23,6 +23,7 @@ import com.example.dapenduk.ui.addpenduduk.AddEditPendudukActivity;
 import com.example.dapenduk.R;
 import com.example.dapenduk.data.model.Penduduk;
 import com.example.dapenduk.ui.adapter.ListPendudukAdapter;
+import com.example.dapenduk.utils.Static;
 import com.example.dapenduk.utils.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -31,9 +32,9 @@ import java.util.List;
 import static com.example.dapenduk.ui.login.LoginActivity.IS_LOGGED;
 import static com.example.dapenduk.ui.login.LoginActivity.SHARED_PREFS;
 
-public class ListPendudukActivity extends AppCompatActivity implements View.OnClickListener {
+public class listPendudukActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private PendudukViewModel pendudukViewModel;
+    private listPendudukViewModel listPendudukViewModel;
     private ListPendudukAdapter listPendudukAdapter;
     private RecyclerView rvListPenduduk;
     private CoordinatorLayout coordinatorLayout;
@@ -45,7 +46,7 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_penduduk);
 
-        pendudukViewModel = new ViewModelProvider(this).get(PendudukViewModel.class);
+        listPendudukViewModel = new ViewModelProvider(this).get(listPendudukViewModel.class);
         listPendudukAdapter = new ListPendudukAdapter();
 
         coordinatorLayout = findViewById(R.id.list_penduduk);
@@ -63,12 +64,12 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
             enableSwipe();
         }
 
-        pendudukViewModel.getAllPenduduk().observe(this,
+        listPendudukViewModel.getAllPenduduk().observe(this,
                 new Observer<List<Penduduk>>() {
                     @Override
                     public void onChanged(List<Penduduk> penduduks) {
                         listPendudukAdapter.submitList(penduduks);
-                        listPendudukAdapter.setPendudukListFull(pendudukViewModel.getAllPenduduk().getValue());
+                        listPendudukAdapter.setPendudukListFull(listPendudukViewModel.getAllPenduduk().getValue());
 
                     }
                 });
@@ -89,7 +90,7 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onStart() {
         super.onStart();
-        pendudukViewModel.updateData();
+        listPendudukViewModel.updateData();
     }
 
     @Override
@@ -101,10 +102,10 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
             Penduduk penduduk;
             penduduk = getDataIntent(data);
 
-            pendudukViewModel.insert(penduduk);
+            listPendudukViewModel.insert(penduduk);
             Utils.showSnackbar(coordinatorLayout,"Data Penduduk Tersimpan");
         } else if (requestCode == EDIT_NOTE_REQUEST && resultCode == RESULT_OK && data != null) {
-            long id = data.getLongExtra(AddEditPendudukActivity.EXTRA_ID, -1);
+            long id = data.getLongExtra(Static.EXTRA_ID, -1);
             if (id == -1) {
                 Utils.showSnackbar(coordinatorLayout,"Penduduk Tidak Dapat Diupdate" );
                 return;
@@ -113,7 +114,7 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
             penduduk = getDataIntent(data);
             penduduk.setId(id);
 
-            pendudukViewModel.update(penduduk);
+            listPendudukViewModel.update(penduduk);
         } else {
             Utils.showSnackbar(coordinatorLayout,"Data Penduduk Tidak Tersimpan");
 
@@ -133,10 +134,10 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.delete_all) {
-            pendudukViewModel.deleteAll();
+            listPendudukViewModel.deleteAll();
 
             Utils.showSnackbar(coordinatorLayout,"Semua Data Terhapus");
-            pendudukViewModel.updateData();
+            listPendudukViewModel.updateData();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -149,7 +150,7 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
                 startActivityForResult(new Intent(this, AddEditPendudukActivity.class), ADD_NOTE_REQUEST);
                 break;
             case R.id.fab_count_list:
-                pendudukViewModel.count();
+                listPendudukViewModel.count();
         }
     }
 
@@ -188,18 +189,18 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                pendudukViewModel.delete(listPendudukAdapter.getPendudukPos(viewHolder.getAdapterPosition()));
-                pendudukViewModel.updateData();
+                listPendudukViewModel.delete(listPendudukAdapter.getPendudukPos(viewHolder.getAdapterPosition()));
+                listPendudukViewModel.updateData();
             }
         }).attachToRecyclerView(rvListPenduduk);
     }
 
     private Penduduk getDataIntent(Intent data) {
-        String name = data.getStringExtra(AddEditPendudukActivity.EXTRA_NAME);
-        String address = data.getStringExtra(AddEditPendudukActivity.EXTRA_ADDRESS);
-        String bornAt = data.getStringExtra(AddEditPendudukActivity.EXTRA_BORN_AT);
-        String profession = data.getStringExtra(AddEditPendudukActivity.EXTRA_PROFESSION);
-        boolean isMale = data.getBooleanExtra(AddEditPendudukActivity.EXTRA_IS_MALE, false);
+        String name = data.getStringExtra(Static.EXTRA_NAME);
+        String address = data.getStringExtra(Static.EXTRA_ADDRESS);
+        String bornAt = data.getStringExtra(Static.EXTRA_BORN_AT);
+        String profession = data.getStringExtra(Static.EXTRA_PROFESSION);
+        boolean isMale = data.getBooleanExtra(Static.EXTRA_IS_MALE, false);
 
         Penduduk penduduk = new Penduduk();
 
@@ -215,13 +216,13 @@ public class ListPendudukActivity extends AppCompatActivity implements View.OnCl
 
     private Intent putDataIntent(Penduduk penduduk) {
 
-        Intent intent = new Intent(ListPendudukActivity.this, AddEditPendudukActivity.class);
-        intent.putExtra(AddEditPendudukActivity.EXTRA_NAME, penduduk.getName());
-        intent.putExtra(AddEditPendudukActivity.EXTRA_ID, penduduk.getId());
-        intent.putExtra(AddEditPendudukActivity.EXTRA_ADDRESS, penduduk.getAddress());
-        intent.putExtra(AddEditPendudukActivity.EXTRA_BORN_AT, penduduk.getBornAt());
-        intent.putExtra(AddEditPendudukActivity.EXTRA_IS_MALE, penduduk.getIsMale());
-        intent.putExtra(AddEditPendudukActivity.EXTRA_PROFESSION, penduduk.getProfession());
+        Intent intent = new Intent(listPendudukActivity.this, AddEditPendudukActivity.class);
+        intent.putExtra(Static.EXTRA_NAME, penduduk.getName());
+        intent.putExtra(Static.EXTRA_ID, penduduk.getId());
+        intent.putExtra(Static.EXTRA_ADDRESS, penduduk.getAddress());
+        intent.putExtra(Static.EXTRA_BORN_AT, penduduk.getBornAt());
+        intent.putExtra(Static.EXTRA_IS_MALE, penduduk.getIsMale());
+        intent.putExtra(Static.EXTRA_PROFESSION, penduduk.getProfession());
         return intent;
 
     }

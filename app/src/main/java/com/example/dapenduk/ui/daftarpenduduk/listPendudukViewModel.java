@@ -13,13 +13,13 @@ import com.example.dapenduk.data.model.Penduduk;
 import java.util.List;
 
 
-public class PendudukViewModel extends AndroidViewModel {
+public class listPendudukViewModel extends AndroidViewModel {
     private LiveData<List<Penduduk>> listPenduduk;
     private PendudukRepository pendudukRepository;
     private static final String TAG = "updatebos";
 
 
-    public PendudukViewModel(@NonNull Application application) {
+    public listPendudukViewModel(@NonNull Application application) {
         super(application);
         pendudukRepository = new PendudukRepository(application);
         listPenduduk = pendudukRepository.getAllPenduduk();

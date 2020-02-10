@@ -15,7 +15,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.dapenduk.R;
-import com.example.dapenduk.ui.daftarpenduduk.ListPendudukActivity;
+import com.example.dapenduk.ui.daftarpenduduk.listPendudukActivity;
 import com.example.dapenduk.utils.Utils;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void toListActivity() {
-        startActivity(new Intent(this, ListPendudukActivity.class));
+        startActivity(new Intent(this, listPendudukActivity.class));
 
     }
 

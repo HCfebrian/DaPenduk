@@ -20,15 +20,14 @@ import com.example.dapenduk.utils.Utils;
 
 import static com.example.dapenduk.ui.login.LoginActivity.IS_LOGGED;
 import static com.example.dapenduk.ui.login.LoginActivity.SHARED_PREFS;
+import static com.example.dapenduk.utils.Static.EXTRA_ADDRESS;
+import static com.example.dapenduk.utils.Static.EXTRA_BORN_AT;
+import static com.example.dapenduk.utils.Static.EXTRA_ID;
+import static com.example.dapenduk.utils.Static.EXTRA_IS_MALE;
+import static com.example.dapenduk.utils.Static.EXTRA_NAME;
+import static com.example.dapenduk.utils.Static.EXTRA_PROFESSION;
 
 public class AddEditPendudukActivity extends AppCompatActivity implements View.OnClickListener {
-
-    public static final String EXTRA_ID = "com.example.dapenduk.EXTRA_ID";
-    public static final String EXTRA_NAME = "com.example.dapenduk.EXTRA_NAME";
-    public static final String EXTRA_IS_MALE = "com.example.dapenduk.EXTRA_ISMALE";
-    public static final String EXTRA_ADDRESS = "com.example.dapenduk.EXTRA_ADDRESS";
-    public static final String EXTRA_BORN_AT = "com.example.dapenduk.EXTRA_BORN_AT";
-    public static final String EXTRA_PROFESSION = "com.example.dapenduk.EXTRA_PROFESSION";
 
     private EditText etName, etAddress, etBornAt, etProfession;
     private RadioGroup rgGender;
