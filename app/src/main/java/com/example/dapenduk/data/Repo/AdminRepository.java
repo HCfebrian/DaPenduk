@@ -32,6 +32,8 @@ public class AdminRepository {
 
 
 
+
+
     public List<Admin> getAuthentication(String username){
       return  daoSession.getAdminDao().queryBuilder().where(AdminDao.Properties.Username.eq(username)).list();
 
